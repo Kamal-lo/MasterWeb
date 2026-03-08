@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculté des Sciences Agadir | Université Ibn Zohr</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    
+    <style>
+        :root {
+            --uiz-blue: #003366; 
+            --uiz-gold: #c5a059; 
+            --light-gray: #f8f9fa;
+            --uiz-dark: #0e1111;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #fff;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            background-color: var(--uiz-blue) !important;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: white !important;
+        }
+
+        .navbar-dark .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            margin-left: 15px;
+            transition: 0.3s;
+        }
+
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: var(--uiz-gold) !important;
+        }
+
+        .navbar-dark .navbar-nav .nav-link.active {
+            color: white !important;
+            border-bottom: 2px solid var(--uiz-gold);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero-section {
+            background: linear-gradient(rgba(0, 51, 102, 0.8), rgba(0, 51, 102, 0.8)), 
+                        url("{% static 'pictures/faculte.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 0;
+            margin-bottom: 50px;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* --- CARDS --- */
+        .feature-card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        .icon-box {
+            width: 70px;
+            height: 70px;
+            background: var(--light-gray);
+            color: var(--uiz-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            transition: 0.3s;
+        }
+        .feature-card:hover .icon-box {
+            background: var(--uiz-blue);
+            color: white;
+        }
+
+        /* --- FOOTER AMÉLIORÉ --- */
+        footer {
+            background-color: var(--uiz-dark);
+            color: #ffffff !important;
+            padding: 60px 0 30px;
+            margin-top: 50px;
+        }
+        
+        footer h5 {
+            color: var(--uiz-gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+
+        footer p, footer .text-muted {
+            color: #e0e0e0 !important;
+        }
+
+        footer a.text-muted {
+            color: #e0e0e0 !important;
+            transition: 0.3s;
+        }
+
+        footer a.text-muted:hover {
+            color: var(--uiz-gold) !important;
+            padding-left: 5px;
+        }
+
+        .social-icons a {
+            color: white !important;
+            background: rgba(255,255,255,0.1);
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .social-icons a:hover {
+            background: var(--uiz-gold);
+            transform: translateY(-3px);
+            color: var(--uiz-dark) !important;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1) !important;
+            margin-top: 40px;
+            padding-top: 25px;
+        }
+
+        .footer-bottom p {
+            color: #ffffff !important;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <i class="fas fa-graduation-cap me-2 text-warning"></i> FSA AGADIR
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'home' %}">Accueil</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Espace Étudiant</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Départements</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">À propos</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section class="hero-section text-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1>Faculté des Sciences d'Agadir</h1>
+                <p class="lead mb-4">Pôle d'excellence de l'Université Ibn Zohr dédié à l'innovation, la recherche scientifique et la réussite de nos étudiants.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="#formations" class="btn btn-outline-light btn-lg px-4">Nos Formations</a>
+                    <a href="{% url 'dashboard' %}" class="btn btn-warning btn-lg px-4 text-dark fw-bold shadow">Espace Numérique</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container mb-5" id="formations">
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="card feature-card p-4">
+                <div class="icon-box"><i class="fas fa-book-open"></i></div>
+                <h3 class="h4">Offre de Formation</h3>
+                <p class="text-muted small">Découvrez nos filières de Licence, Master et Doctorat adaptées aux défis de demain.</p>
+                <a href="#" class="btn btn-link text-decoration-none fw-bold">En savoir plus →</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card p-4">
+                <div class="icon-box"><i class="fas fa-user-graduate"></i></div>
+                <h3 class="h4">Espace Étudiant</h3>
+                <p class="text-muted small">Consultez vos notes, vos emplois du temps et vos documents administratifs.</p>
+                <a href="{% url 'dashboard' %}" class="btn btn-link text-decoration-none fw-bold">Accéder à l'espace →</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card p-4">
+                <div class="icon-box"><i class="fas fa-microscope"></i></div>
+                <h3 class="h4">Recherche Scientifique</h3>
+                <p class="text-muted small">La FSA abrite des laboratoires de pointe pour une recherche d'excellence.</p>
+                <a href="#" class="btn btn-link text-decoration-none fw-bold">Découvrir nos labos →</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5 border-top">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h2 class="fw-bold">Besoin d'aide ?</h2>
+            <p class="text-muted">Contactez l'administration pour toute question relative à votre parcours.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <p class="mb-1 fw-bold"><i class="fas fa-map-marker-alt me-2 text-primary"></i> BP 8106 Cité Dakhla, Agadir</p>
+            <p class="mb-0"><i class="fas fa-phone me-2 text-primary"></i> +212 5 28 22 09 57</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 mb-4">
+                <h5 class="mb-3">Faculté des Sciences Agadir</h5>
+                <p class="small">
+                    Établissement public de l'Université Ibn Zohr, la FSA s'engage pour un enseignement supérieur de qualité et une innovation constante au profit de la région Souss-Massa.
+                </p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h5 class="mb-3">Liens Utiles</h5>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><a href="http://www.uiz.ac.ma" target="_blank" class="text-muted text-decoration-none"><i class="fas fa-external-link-alt me-2"></i>Université Ibn Zohr</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Services en ligne</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Calendrier Universitaire</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4 text-md-end">
+                <h5 class="mb-3">Suivez-nous</h5>
+                <div class="d-flex gap-3 justify-content-center justify-content-md-end social-icons">
+                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" title="Twitter"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p class="small mb-0">
+                <i class="far fa-copyright me-1"></i> 2026 <strong>Faculté des Sciences</strong> – Université Ibn Zohr, Agadir. 
+                <span class="d-block d-md-inline ms-md-2">Tous droits réservés.</span>
+            </p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

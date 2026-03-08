@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Étudiant - FSA Agadir</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <style>
+        :root {
+            --uiz-blue: #003366;
+            --uiz-green-table: #99cc99;
+            --uiz-orange-border: #ff9933;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f9;
+        }
+
+        /* Navbar principale */
+        .navbar-main {
+            background-color: var(--uiz-blue) !important;
+        }
+
+        /* Navbar interne */
+        .nav-student-tabs {
+            background: white;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 30px;
+        }
+
+        .nav-student-tabs .nav-link {
+            color: #555;
+            font-weight: 500;
+            padding: 15px 20px;
+        }
+
+        .nav-student-tabs .nav-link.active {
+            color: var(--uiz-blue);
+            border-bottom: 3px solid var(--uiz-blue);
+            background: rgba(0, 51, 102, 0.05);
+        }
+
+        /* Dropdown au survol */
+        .nav-item.dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+
+        .dropdown-menu {
+            border-radius: 0;
+            border: 1px solid #ddd;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(0, 51, 102, 0.1);
+            color: var(--uiz-blue);
+        }
+
+        /* Tableau */
+        .table-custom {
+            border: 2px solid var(--uiz-orange-border);
+            background-color: white;
+        }
+
+        .table-custom thead th {
+            background-color: var(--uiz-green-table);
+            border: 1px solid var(--uiz-orange-border);
+            text-align: center;
+        }
+
+        .table-custom td {
+            border: 1px solid var(--uiz-orange-border);
+            text-align: center;
+            font-weight: bold;
+            color: #003399;
+        }
+
+        .res-v {
+            color: #cc0000;
+        }
+
+        .legende-box {
+            background-color: #ffffcc;
+            border: 1px solid var(--uiz-orange-border);
+            padding: 10px;
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <!-- NAVBAR PRINCIPALE -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-main">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-graduation-cap me-2"></i>FSA AGADIR
+            </a>
+
+            <div class="ms-auto">
+                <span class="text-white me-3 small">
+                    {{ etudiant.first_name_fr }} {{ etudiant.last_name_fr }} ({{ etudiant.cin }})
+                </span>
+                <a href="{% url 'home' %}" class="btn btn-sm btn-outline-light">Déconnexion</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- NAVBAR INTERNE -->
+    <div class="nav-student-tabs">
+        <div class="container">
+            <ul class="nav">
+
+                <!-- EXAMEN -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active">
+                        <i class="fas fa-file-alt me-2"></i>Examen
+                    </a>
+                    <ul class="dropdown-menu shadow">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'resultat' %}">
+                                <i class="fas fa-poll me-2"></i>Résultats
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'demande' %}">
+                                <i class="fas fa-edit me-2"></i>Demande de recorrection
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'reponse' %}">
+                                <i class="fas fa-envelope-open-text me-2"></i>Réponse de recorrection
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active">
+                        <i class="fas fa-file-alt me-2"></i>Iformations
+                    </a>
+                    <ul class="dropdown-menu shadow">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'information_scolaire' %}">
+                                <i class="fas fa-poll me-2"></i>Information scolaire
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'information_prive' %}">
+                                <i class="fas fa-edit me-2"></i>Information privee
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="">
+                        <i class="fas fa-file-alt me-2"></i>Inscription
+                    </a>
+                    <ul class="dropdown-menu shadow">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'actuelle' %}">
+                                <i class="fas fa-poll me-2"></i>Actuelle
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'group' %}">
+                                <i class="fas fa-edit me-2"></i>Section et groupe
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'emp' %}">
+                                <i class="fas fa-envelope-open-text me-2"></i>Emploi du temps
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+            </ul>
+        </div>
+    </div>
+
+    <!-- CONTENU -->
+
+
+</body>
+
+</html>

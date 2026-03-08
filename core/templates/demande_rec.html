@@ -1,0 +1,378 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Étudiant - FSA Agadir</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <style>
+        :root {
+            --uiz-blue: #003366;
+            --uiz-green-table: #99cc99;
+            --uiz-orange-border: #ff9933;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f9;
+        }
+
+        /* Navbar principale */
+        .navbar-main {
+            background-color: var(--uiz-blue) !important;
+        }
+
+        /* Navbar interne */
+        .nav-student-tabs {
+            background: white;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 30px;
+        }
+
+        .nav-student-tabs .nav-link {
+            color: #555;
+            font-weight: 500;
+            padding: 15px 20px;
+        }
+
+        .nav-student-tabs .nav-link.active {
+            color: var(--uiz-blue);
+            border-bottom: 3px solid var(--uiz-blue);
+            background: rgba(0, 51, 102, 0.05);
+        }
+
+        /* Dropdown au survol */
+        .nav-item.dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+
+        .dropdown-menu {
+            border-radius: 0;
+            border: 1px solid #ddd;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(0, 51, 102, 0.1);
+            color: var(--uiz-blue);
+        }
+
+        /* Tableau */
+        .table-custom {
+            border: 2px solid var(--uiz-orange-border);
+            background-color: white;
+        }
+
+        .table-custom thead th {
+            background-color: var(--uiz-green-table);
+            border: 1px solid var(--uiz-orange-border);
+            text-align: center;
+        }
+
+        .table-custom td {
+            border: 1px solid var(--uiz-orange-border);
+            text-align: center;
+            font-weight: bold;
+            color: #003399;
+        }
+
+        .res-v {
+            color: #cc0000;
+        }
+
+        .legende-box {
+            background-color: #ffffcc;
+            border: 1px solid var(--uiz-orange-border);
+            padding: 10px;
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <!-- NAVBAR PRINCIPALE -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-main">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-graduation-cap me-2"></i>FSA AGADIR
+            </a>
+
+            <div class="ms-auto">
+                <span class="text-white me-3 small">
+                    {{ etudiant.first_name_fr }} {{ etudiant.last_name_fr }} ({{ etudiant.cin }})
+                </span>
+                <a href="{% url 'home' %}" class="btn btn-sm btn-outline-light">Déconnexion</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- NAVBAR INTERNE -->
+    <div class="nav-student-tabs">
+        <div class="container">
+            <ul class="nav">
+
+                <!-- EXAMEN -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#">
+                        <i class="fas fa-file-alt me-2"></i>Examen
+                    </a>
+                    <ul class="dropdown-menu shadow">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'resultat' %}">
+                                <i class="fas fa-poll me-2"></i>Résultats
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'demande' %}">
+                                <i class="fas fa-edit me-2"></i>Demande de recorrection
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'reponse' %}">
+                                <i class="fas fa-envelope-open-text me-2"></i>Réponse de recorrection
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active">
+                        <i class="fas fa-file-alt me-2"></i>Iformations
+                    </a>
+                    <ul class="dropdown-menu shadow">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'information_scolaire' %}">
+                                <i class="fas fa-poll me-2"></i>Information scolaire
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'information_prive' %}">
+                                <i class="fas fa-edit me-2"></i>Information privee
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#">
+                        <i class="fas fa-file-alt me-2"></i>Inscription
+                    </a>
+                    <ul class="dropdown-menu shadow">
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-poll me-2"></i>Actuelle
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'demande' %}">
+                                <i class="fas fa-edit me-2"></i>Section et groupe
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'reponse' %}">
+                                <i class="fas fa-envelope-open-text me-2"></i>Emploi du temps
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+            </ul>
+        </div>
+    </div>
+
+    <!-- CONTENU -->
+    <div class="container mb-5">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="mb-0 fw-bold" style="color: var(--uiz-blue);">
+                    <i class="fas fa-edit me-2"></i>Formulaire de Demande de Recorrection
+                </h5>
+                <p class="text-muted small mb-0 mt-1">Cochez les modules concernés et précisez votre motif ci-dessous.
+                </p>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="POST" action="#">
+                    {% csrf_token %}
+
+                    <div class="table-responsive mb-4">
+                        <table class="table table-hover align-middle border">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-center" style="width: 80px;">Sélect.</th>
+                                    <th>Code Module</th>
+                                    <th>Libellé du Module</th>
+                                    <th class="text-center">Note Actuelle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for module in modules %}
+                                <tr>
+                                    <td class="text-center">
+                                        <input class="form-check-input border-primary" type="checkbox" name="modules"
+                                            value="{{ module.code }}" style="width: 20px; height: 20px;">
+                                    </td>
+                                    <td class="fw-bold text-secondary">{{ module.code }}</td>
+                                    <td>{{ module.nom }}</td>
+                                    <td class="text-center"><span
+                                            class="badge bg-light text-dark border">{{module.note|default:"0.0"|floatformat:2}}
+                                            / 20</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="fas fa-folder-open mb-2" style="font-size: 24px;"></i><br>
+                                        Aucun module disponible pour la recorrection.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="remarque" class="form-label fw-bold" style="color: var(--uiz-blue);">
+                            <i class="fas fa-comment-dots me-2"></i>Justification ou Remarque supplémentaire :
+                        </label>
+                        <textarea class="form-control border-primary-subtle" id="remarque" name="remarque" rows="4"
+                            placeholder="Expliquez brièvement pourquoi vous demandez une recorrection (ex: erreur de saisie, oubli d'une partie de l'examen...)"
+                            style="resize: none; background-color: #fcfdfe;"></textarea>
+                        <div class="form-text mt-2">
+                            <i class="fas fa-info-circle me-1"></i> Vous pouvez sélectionner deux modules maximum pour
+                            une même demande.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 border-top pt-4">
+                        {% if deja_soumis %}
+                        <div class="alert alert-warning w-100 mb-0 d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+                            <div>
+                                <strong>Demande déjà soumise !</strong><br>
+                                Vous avez déjà effectué une demande de recorrection. Vous ne pouvez pas en soumettre une
+                                autre.
+                            </div>
+                        </div>
+                        {% else %}
+                        <button type="reset" class="btn btn-outline-secondary px-4">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm"
+                            style="background-color: var(--uiz-blue); border: none;">
+                            <i class="fas fa-paper-plane me-2"></i>Envoyer la demande
+                        </button>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="confirmationModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirmation de la demande
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body text-danger fw-bold">
+                    Êtes-vous sûr de ces modules ? Vous ne pourrez plus faire de demande après celle-ci.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmSubmitBtn">Oui, envoyer la demande</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Bootstrap pour les Modals -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    {% if not deja_soumis %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            const checkboxes = document.querySelectorAll('input[name="modules"]');
+
+            // Initialisation du modal Bootstrap
+            const confirmationModalElement = document.getElementById('confirmationModal');
+            const confirmationModal = new bootstrap.Modal(confirmationModalElement);
+            const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+
+            // Limite la sélection à 2 modules maximum
+            function updateCheckboxState() {
+                const checkedCount = document.querySelectorAll('input[name="modules"]:checked').length;
+                if (checkedCount >= 2) {
+                    checkboxes.forEach(box => {
+                        if (!box.checked) box.disabled = true;
+                    });
+                } else {
+                    checkboxes.forEach(box => {
+                        box.disabled = false;
+                    });
+                }
+            }
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateCheckboxState);
+            });
+
+            // Met à jour l'état initial des cases à cocher
+            updateCheckboxState();
+
+            // Alerte de confirmation avant envoi
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    const checkedCount = document.querySelectorAll('input[name="modules"]:checked').length;
+                    if (checkedCount === 0) {
+                        alert("Veuillez sélectionner au moins un module.");
+                        e.preventDefault();
+                        return;
+                    }
+
+                    // Empêche l'envoi immédiat et affiche le Modal
+                    e.preventDefault();
+                    confirmationModal.show();
+                });
+
+                // Si l'utilisateur confirme dans le Modal
+                confirmSubmitBtn.addEventListener('click', function () {
+                    form.submit(); // Envoie directement le formulaire (sans redéclencher l'événement 'submit')
+                });
+            }
+        });
+    </script>
+    {% else %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Désactiver tous les éléments de formulaire si la demande est déjà soumise
+            document.querySelectorAll('input, textarea, button').forEach(el => el.disabled = true);
+        });
+    </script>
+    {% endif %}
+
+</body>
+
+</html>

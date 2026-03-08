@@ -1,0 +1,316 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Étudiant - FSA Agadir</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <style>
+        :root {
+            --uiz-blue: #003366;
+            --uiz-green-table: #99cc99;
+            --uiz-orange-border: #ff9933;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f9;
+        }
+
+        /* Navbar principale */
+        .navbar-main {
+            background-color: var(--uiz-blue) !important;
+        }
+
+        /* Navbar interne */
+        .nav-student-tabs {
+            background: white;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 30px;
+        }
+
+        .nav-student-tabs .nav-link {
+            color: #555;
+            font-weight: 500;
+            padding: 15px 20px;
+        }
+
+        .nav-student-tabs .nav-link.active {
+            color: var(--uiz-blue);
+            border-bottom: 3px solid var(--uiz-blue);
+            background: rgba(0, 51, 102, 0.05);
+        }
+
+        /* Dropdown au survol */
+        .nav-item.dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+
+        .dropdown-menu {
+            border-radius: 0;
+            border: 1px solid #ddd;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(0, 51, 102, 0.1);
+            color: var(--uiz-blue);
+        }
+
+        /* Tableau */
+        .table-custom {
+            border: 2px solid var(--uiz-orange-border);
+            background-color: white;
+        }
+
+        .table-custom thead th {
+            background-color: var(--uiz-green-table);
+            border: 1px solid var(--uiz-orange-border);
+            text-align: center;
+        }
+
+        .table-custom td {
+            border: 1px solid var(--uiz-orange-border);
+            text-align: center;
+            font-weight: bold;
+            color: #003399;
+        }
+
+        .res-v {
+            color: #cc0000;
+        }
+
+        .legende-box {
+            background-color: #ffffcc;
+            border: 1px solid var(--uiz-orange-border);
+            padding: 10px;
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+
+        /* Styles spécifiques pour cette page */
+        .card {
+            transition: transform 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .table thead th {
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 12px;
+        }
+
+        .table tbody td {
+            padding: 15px 12px;
+            font-size: 0.9rem;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <!-- NAVBAR PRINCIPALE -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-main">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-graduation-cap me-2"></i>FSA AGADIR
+            </a>
+
+            <div class="ms-auto">
+                <span class="text-white me-3 small">
+                    {{ etudiant.first_name_fr }} {{ etudiant.last_name_fr }} ({{ etudiant.cin }})
+                </span>
+                <a href="{% url 'home' %}" class="btn btn-sm btn-outline-light">Déconnexion</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- NAVBAR INTERNE -->
+    <div class="nav-student-tabs">
+        <div class="container">
+            <ul class="nav">
+
+                <!-- EXAMEN -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active">
+                        <i class="fas fa-file-alt me-2"></i>Examen
+                    </a>
+                    <ul class="dropdown-menu shadow">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'resultat' %}">
+                                <i class="fas fa-poll me-2"></i>Résultats
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'demande' %}">
+                                <i class="fas fa-edit me-2"></i>Demande de recorrection
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'reponse' %}">
+                                <i class="fas fa-envelope-open-text me-2"></i>Réponse de recorrection
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active">
+                        <i class="fas fa-file-alt me-2"></i>Iformations
+                    </a>
+                    <ul class="dropdown-menu shadow">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'information_scolaire' %}">
+                                <i class="fas fa-poll me-2"></i>Information scolaire
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'information_prive' %}">
+                                <i class="fas fa-edit me-2"></i>Information privee
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#">
+                        <i class="fas fa-file-alt me-2"></i>Inscription
+                    </a>
+                    <ul class="dropdown-menu shadow">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'actuelle' %}">
+                                <i class="fas fa-poll me-2"></i>Actuelle
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'group' %}">
+                                <i class="fas fa-edit me-2"></i>Section et groupe
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'emp' %}">
+                                <i class="fas fa-envelope-open-text me-2"></i>Emploi du temps
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+            </ul>
+        </div>
+    </div>
+    <div class="container mb-5">
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="p-4 bg-white rounded-3 shadow-sm border-start border-4"
+                    style="border-color: var(--uiz-gold) !important;">
+                    <h4 class="fw-bold mb-1" style="color: var(--uiz-blue);">Bienvenue, MOUNAZIL DOHA</h4>
+                    <div class="d-flex flex-wrap gap-3 mt-2">
+                        <span class="badge bg-light text-dark border"><i
+                                class="fas fa-id-card me-2 text-primary"></i>CNE: D130XXXXXX</span>
+                        <span class="badge bg-light text-dark border"><i
+                                class="fas fa-fingerprint me-2 text-primary"></i>Code Massar: 123456789</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-header py-3" style="background-color: var(--uiz-blue);">
+                        <h5 class="card-title mb-0 text-white fw-bold">
+                            <i class="fas fa-chalkboard-teacher me-2"></i>Sections des cours magistraux
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center py-5">
+                            <div class="mb-3">
+                                <i class="fas fa-search fa-3x text-muted opacity-25"></i>
+                            </div>
+                            <p class="text-muted fw-medium italic">Aucune section n'a été trouvée pour ce semestre.</p>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr class="text-center small">
+                                        <th>Semestre</th>
+                                        <th>Section</th>
+                                        <th>Emploi du temps</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-header py-3" style="background-color: var(--uiz-blue);">
+                        <h5 class="card-title mb-0 text-white fw-bold">
+                            <i class="fas fa-users-cog me-2"></i>Groupes des travaux pratiques et dirigés
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle border-0">
+                                <thead class="table-light">
+                                    <tr class="text-center small text-uppercase">
+                                        <th class="border-0">Semestre</th>
+                                        <th class="border-0">Groupe TD</th>
+                                        <th class="border-0">Groupe TP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-center">
+                                        <td><span class="badge rounded-pill bg-info text-dark">Semestre 5</span></td>
+                                        <td class="fw-bold text-primary">Groupe A1</td>
+                                        <td class="fw-bold text-success">Groupe B2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-0 text-center pb-3">
+                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i> Affectations basées sur votre
+                            inscription actuelle.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
