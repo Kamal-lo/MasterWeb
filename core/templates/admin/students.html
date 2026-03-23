@@ -1,0 +1,161 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestion des Étudiants{% endblock %}
+{% block page_title %}👨‍🎓 Gestion des Étudiants{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3><i class="fas fa-users" style="color:var(--admin-accent)"></i> Liste des étudiants</h3>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <form method="get" class="admin-search" style="margin:0;">
+                <i class="fas fa-search"></i>
+                <input type="text" name="q" placeholder="Rechercher par nom, CIN, CNE..." value="{{ query }}">
+            </form>
+            <button class="btn-admin btn-primary-admin" onclick="openModal('addStudentModal')">
+                <i class="fas fa-plus"></i> Ajouter
+            </button>
+        </div>
+    </div>
+    <div class="admin-card-body" style="padding:0;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom complet</th>
+                    <th>CIN</th>
+                    <th>Code Massar</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in students %}
+                <tr>
+                    <td>{{ s.id_student }}</td>
+                    <td><strong>{{ s.first_name_fr }} {{ s.last_name_fr }}</strong></td>
+                    <td>{{ s.cin|default:"-" }}</td>
+                    <td>{{ s.massar_code|default:"-" }}</td>
+                    <td>{{ s.email|default:"-" }}</td>
+                    <td>{{ s.phone|default:"-" }}</td>
+                    <td>
+                        <div class="btn-group-actions">
+                            <a href="?edit={{ s.id_student }}" class="btn-admin btn-warning-admin btn-sm-admin"
+                                title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="post" action="{% url 'admin_students' %}" style="margin:0;"
+                                onsubmit="return confirm('Supprimer cet étudiant ?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="student_id" value="{{ s.id_student }}">
+                                <button type="submit" class="btn-admin btn-danger-admin btn-sm-admin" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="fas fa-user-graduate"></i>
+                            <p>Aucun étudiant trouvé</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- MODAL AJOUTER -->
+<div class="admin-modal-overlay" id="addStudentModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3><i class="fas fa-user-plus"></i> Ajouter un étudiant</h3>
+            <button class="admin-modal-close" onclick="closeModal('addStudentModal')">&times;</button>
+        </div>
+        <form method="post" action="{% url 'admin_students' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add">
+            <div class="admin-modal-body">
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Prénom (FR)</label>
+                        <input type="text" name="first_name_fr" class="admin-form-control" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Nom (FR)</label>
+                        <input type="text" name="last_name_fr" class="admin-form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Prénom (AR)</label>
+                        <input type="text" name="first_name_ar" class="admin-form-control" dir="rtl">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Nom (AR)</label>
+                        <input type="text" name="last_name_ar" class="admin-form-control" dir="rtl">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>CIN</label>
+                        <input type="text" name="cin" class="admin-form-control" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Code Massar (CNE)</label>
+                        <input type="text" name="massar_code" class="admin-form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" class="admin-form-control">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Téléphone</label>
+                        <input type="text" name="phone" class="admin-form-control">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Date de naissance</label>
+                        <input type="date" name="birth_date" class="admin-form-control">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Lieu de naissance</label>
+                        <input type="text" name="lieu_naissance" class="admin-form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn-admin btn-danger-admin"
+                    onclick="closeModal('addStudentModal')">Annuler</button>
+                <button type="submit" class="btn-admin btn-success-admin"><i class="fas fa-save"></i>
+                    Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openModal(id) { document.getElementById(id).classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    // Fermer modal en cliquant à l'extérieur
+    document.querySelectorAll('.admin-modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', e => {
+            if (e.target === overlay) overlay.classList.remove('show');
+        });
+    });
+</script>
+{% endblock %}

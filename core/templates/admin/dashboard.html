@@ -1,0 +1,132 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}📊 Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card blue">
+        <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+        <div class="stat-info">
+            <h3>{{ total_students }}</h3>
+            <p>Étudiants inscrits</p>
+        </div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+        <div class="stat-info">
+            <h3>{{ total_professors }}</h3>
+            <p>Professeurs</p>
+        </div>
+    </div>
+    <div class="stat-card orange">
+        <div class="stat-icon"><i class="fas fa-university"></i></div>
+        <div class="stat-info">
+            <h3>{{ total_filieres }}</h3>
+            <p>Filières</p>
+        </div>
+    </div>
+    <div class="stat-card cyan">
+        <div class="stat-icon"><i class="fas fa-book"></i></div>
+        <div class="stat-info">
+            <h3>{{ total_modules }}</h3>
+            <p>Modules</p>
+        </div>
+    </div>
+    <div class="stat-card red">
+        <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="stat-info">
+            <h3>{{ total_reclamations }}</h3>
+            <p>Réclamations en attente</p>
+        </div>
+    </div>
+    <div class="stat-card purple">
+        <div class="stat-icon"><i class="fas fa-redo"></i></div>
+        <div class="stat-info">
+            <h3>{{ total_recorrections }}</h3>
+            <p>Demandes recorrection</p>
+        </div>
+    </div>
+</div>
+
+<!-- Dernières réclamations -->
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3><i class="fas fa-bell" style="color:var(--admin-warning)"></i> Dernières réclamations</h3>
+    </div>
+    <div class="admin-card-body" style="padding:0;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Étudiant</th>
+                    <th>Champ</th>
+                    <th>Nouvelle valeur</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in recent_reclamations %}
+                <tr>
+                    <td>{{ r.student.first_name_fr }} {{ r.student.last_name_fr }}</td>
+                    <td>{{ r.get_champ_a_modifier_display }}</td>
+                    <td>{{ r.nouvelle_valeur }}</td>
+                    <td>{{ r.date_demande|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <span
+                            class="badge-admin {% if r.statut == 'Validé' %}badge-success{% elif r.statut == 'Rejeté' %}badge-danger{% else %}badge-warning{% endif %}">
+                            {{ r.statut }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align:center;padding:30px;color:var(--admin-text-muted);">Aucune
+                        réclamation</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Dernières demandes de recorrection -->
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3><i class="fas fa-redo" style="color:var(--admin-accent)"></i> Dernières demandes de recorrection</h3>
+    </div>
+    <div class="admin-card-body" style="padding:0;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Étudiant</th>
+                    <th>Module</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in recent_recorrections %}
+                <tr>
+                    <td>{{ d.student.first_name_fr }} {{ d.student.last_name_fr }}</td>
+                    <td>{{ d.module.module_code }} - {{ d.module.module_name }}</td>
+                    <td>{{ d.date_demande|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <span
+                            class="badge-admin {% if d.statut == 'Traitée' %}badge-success{% elif d.statut == 'Rejetée' %}badge-danger{% else %}badge-info{% endif %}">
+                            {{ d.statut }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align:center;padding:30px;color:var(--admin-text-muted);">Aucune demande
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

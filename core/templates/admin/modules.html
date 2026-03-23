@@ -1,0 +1,247 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestion Filières & Modules{% endblock %}
+{% block page_title %}🏫 Gestion des Filières & Modules{% endblock %}
+
+{% block content %}
+<!-- Filières -->
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3><i class="fas fa-sitemap" style="color:var(--admin-accent)"></i> Filières</h3>
+        <button class="btn-admin btn-primary-admin" onclick="openModal('addFiliereModal')">
+            <i class="fas fa-plus"></i> Nouvelle filière
+        </button>
+    </div>
+    <div class="admin-card-body" style="padding:0;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom de la filière</th>
+                    <th>Abréviation</th>
+                    <th>Nb Modules</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in filieres %}
+                <tr>
+                    <td>{{ f.id_filiere }}</td>
+                    <td><strong>{{ f.filiere_name }}</strong></td>
+                    <td><span class="badge-admin badge-info">{{ f.branch_short_name }}</span></td>
+                    <td>{{ f.module_count }}</td>
+                    <td>
+                        <div class="btn-group-actions">
+                            <button class="btn-admin btn-warning-admin btn-sm-admin"
+                                onclick="editFiliere('{{ f.id_filiere }}', '{{ f.filiere_name }}', '{{ f.branch_short_name }}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <form method="post" style="margin:0;"
+                                onsubmit="return confirm('Supprimer cette filière ?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_filiere">
+                                <input type="hidden" name="filiere_id" value="{{ f.id_filiere }}">
+                                <button type="submit" class="btn-admin btn-danger-admin btn-sm-admin"><i
+                                        class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state"><i class="fas fa-university"></i>
+                            <p>Aucune filière</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modules -->
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3><i class="fas fa-book" style="color:var(--admin-success)"></i> Modules</h3>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <form method="get" class="admin-search" style="margin:0;">
+                <i class="fas fa-search"></i>
+                <input type="text" name="q" placeholder="Rechercher un module..." value="{{ query }}">
+            </form>
+            <button class="btn-admin btn-primary-admin" onclick="openModal('addModuleModal')">
+                <i class="fas fa-plus"></i> Nouveau module
+            </button>
+        </div>
+    </div>
+    <div class="admin-card-body" style="padding:0;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Nom du module</th>
+                    <th>Semestre</th>
+                    <th>Coefficient</th>
+                    <th>Filière</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in modules %}
+                <tr>
+                    <td><span class="badge-admin badge-info">{{ m.module_code }}</span></td>
+                    <td><strong>{{ m.module_name }}</strong></td>
+                    <td>S{{ m.semester|default:"-" }}</td>
+                    <td>{{ m.coefficient|default:"-" }}</td>
+                    <td>{{ m.id_filiere.branch_short_name|default:"-" }}</td>
+                    <td>
+                        <div class="btn-group-actions">
+                            <button class="btn-admin btn-warning-admin btn-sm-admin"
+                                onclick="editModule('{{ m.module_code }}', '{{ m.module_name }}', '{{ m.semester|default:"" }}', '{{ m.coefficient|default:"" }}', '{{ m.id_filiere_id|default:"" }}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <form method="post" style="margin:0;" onsubmit="return confirm('Supprimer ce module ?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_module">
+                                <input type="hidden" name="module_code" value="{{ m.module_code }}">
+                                <button type="submit" class="btn-admin btn-danger-admin btn-sm-admin"><i
+                                        class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state"><i class="fas fa-book"></i>
+                            <p>Aucun module</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Filière -->
+<div class="admin-modal-overlay" id="addFiliereModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3 id="filiereModalTitle"><i class="fas fa-plus"></i> Nouvelle filière</h3>
+            <button class="admin-modal-close" onclick="closeModal('addFiliereModal')">&times;</button>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" id="filiereAction" value="add_filiere">
+            <input type="hidden" name="filiere_id" id="filiereId">
+            <div class="admin-modal-body">
+                <div class="admin-form-group">
+                    <label>Nom de la filière</label>
+                    <input type="text" name="filiere_name" id="filiereName" class="admin-form-control" required>
+                </div>
+                <div class="admin-form-group">
+                    <label>Abréviation</label>
+                    <input type="text" name="branch_short_name" id="filiereShort" class="admin-form-control" required
+                        maxlength="10">
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn-admin btn-danger-admin"
+                    onclick="closeModal('addFiliereModal')">Annuler</button>
+                <button type="submit" class="btn-admin btn-success-admin"><i class="fas fa-save"></i>
+                    Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Module -->
+<div class="admin-modal-overlay" id="addModuleModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3 id="moduleModalTitle"><i class="fas fa-plus"></i> Nouveau module</h3>
+            <button class="admin-modal-close" onclick="closeModal('addModuleModal')">&times;</button>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" id="moduleAction" value="add_module">
+            <input type="hidden" name="old_module_code" id="oldModuleCode">
+            <div class="admin-modal-body">
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Code du module</label>
+                        <input type="text" name="module_code" id="moduleCode" class="admin-form-control" required
+                            maxlength="20">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Nom du module</label>
+                        <input type="text" name="module_name" id="moduleName" class="admin-form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Semestre</label>
+                        <select name="semester" id="moduleSemester" class="admin-form-control">
+                            <option value="">--</option>
+                            {% for i in "123456" %}<option value="{{ i }}">S{{ i }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Coefficient</label>
+                        <input type="number" step="0.01" name="coefficient" id="moduleCoef" class="admin-form-control">
+                    </div>
+                </div>
+                <div class="admin-form-group">
+                    <label>Filière</label>
+                    <select name="id_filiere" id="moduleFiliere" class="admin-form-control">
+                        <option value="">-- Aucune --</option>
+                        {% for f in filieres_all %}
+                        <option value="{{ f.id_filiere }}">{{ f.filiere_name }} ({{ f.branch_short_name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn-admin btn-danger-admin"
+                    onclick="closeModal('addModuleModal')">Annuler</button>
+                <button type="submit" class="btn-admin btn-success-admin"><i class="fas fa-save"></i>
+                    Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openModal(id) { document.getElementById(id).classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    function editFiliere(id, name, short) {
+        document.getElementById('filiereAction').value = 'edit_filiere';
+        document.getElementById('filiereId').value = id;
+        document.getElementById('filiereName').value = name;
+        document.getElementById('filiereShort').value = short;
+        document.getElementById('filiereModalTitle').innerHTML = '<i class="fas fa-edit"></i> Modifier la filière';
+        openModal('addFiliereModal');
+    }
+
+    function editModule(code, name, sem, coef, filId) {
+        document.getElementById('moduleAction').value = 'edit_module';
+        document.getElementById('oldModuleCode').value = code;
+        document.getElementById('moduleCode').value = code;
+        document.getElementById('moduleName').value = name;
+        document.getElementById('moduleSemester').value = sem;
+        document.getElementById('moduleCoef').value = coef;
+        document.getElementById('moduleFiliere').value = filId;
+        document.getElementById('moduleModalTitle').innerHTML = '<i class="fas fa-edit"></i> Modifier le module';
+        openModal('addModuleModal');
+    }
+
+    document.querySelectorAll('.admin-modal-overlay').forEach(o => {
+        o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); });
+    });
+</script>
+{% endblock %}

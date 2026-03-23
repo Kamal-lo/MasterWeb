@@ -1,0 +1,130 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestion des Comptes{% endblock %}
+{% block page_title %}🔐 Gestion des Comptes{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3><i class="fas fa-users-cog" style="color:var(--admin-accent)"></i> Comptes administrateurs</h3>
+        <button class="btn-admin btn-primary-admin" onclick="openModal('addAccountModal')">
+            <i class="fas fa-plus"></i> Nouveau compte
+        </button>
+    </div>
+    <div class="admin-card-body" style="padding:0;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom d'utilisateur</th>
+                    <th>Rôle</th>
+                    <th>Statut</th>
+                    <th>Date de création</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in accounts %}
+                <tr>
+                    <td>{{ a.id_account }}</td>
+                    <td><strong>{{ a.username }}</strong></td>
+                    <td>
+                        <span
+                            class="badge-admin {% if a.role == 'admin' %}badge-danger{% elif a.role == 'professor' %}badge-info{% else %}badge-warning{% endif %}">
+                            {{ a.get_role_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if a.is_active %}
+                        <span class="badge-admin badge-success">Actif</span>
+                        {% else %}
+                        <span class="badge-admin badge-danger">Inactif</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ a.date_created|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <div class="btn-group-actions">
+                            <form method="post" style="margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="toggle">
+                                <input type="hidden" name="account_id" value="{{ a.id_account }}">
+                                <button type="submit"
+                                    class="btn-admin {% if a.is_active %}btn-warning-admin{% else %}btn-success-admin{% endif %} btn-sm-admin"
+                                    title="{% if a.is_active %}Désactiver{% else %}Activer{% endif %}">
+                                    <i class="fas fa-{% if a.is_active %}ban{% else %}check{% endif %}"></i>
+                                </button>
+                            </form>
+                            <form method="post" style="margin:0;" onsubmit="return confirm('Supprimer ce compte ?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="account_id" value="{{ a.id_account }}">
+                                <button type="submit" class="btn-admin btn-danger-admin btn-sm-admin"><i
+                                        class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state"><i class="fas fa-lock"></i>
+                            <p>Aucun compte</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="admin-modal-overlay" id="addAccountModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3><i class="fas fa-user-plus"></i> Nouveau compte</h3>
+            <button class="admin-modal-close" onclick="closeModal('addAccountModal')">&times;</button>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add">
+            <div class="admin-modal-body">
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Nom d'utilisateur</label>
+                        <input type="text" name="username" class="admin-form-control" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Mot de passe</label>
+                        <input type="password" name="password" class="admin-form-control" required>
+                    </div>
+                </div>
+                <div class="admin-form-group">
+                    <label>Rôle</label>
+                    <select name="role" class="admin-form-control" required>
+                        <option value="admin">Administrateur</option>
+                        <option value="professor">Professeur</option>
+                        <option value="scolarite">Scolarité</option>
+                    </select>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn-admin btn-danger-admin"
+                    onclick="closeModal('addAccountModal')">Annuler</button>
+                <button type="submit" class="btn-admin btn-success-admin"><i class="fas fa-save"></i> Créer le
+                    compte</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openModal(id) { document.getElementById(id).classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+    document.querySelectorAll('.admin-modal-overlay').forEach(o => {
+        o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); });
+    });
+</script>
+{% endblock %}

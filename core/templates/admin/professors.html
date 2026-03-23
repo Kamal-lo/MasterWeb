@@ -1,0 +1,158 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestion des Professeurs{% endblock %}
+{% block page_title %}👨‍🏫 Gestion des Professeurs{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3><i class="fas fa-chalkboard-teacher" style="color:var(--admin-accent)"></i> Liste des professeurs</h3>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <form method="get" class="admin-search" style="margin:0;">
+                <i class="fas fa-search"></i>
+                <input type="text" name="q" placeholder="Rechercher..." value="{{ query }}">
+            </form>
+            <button class="btn-admin btn-primary-admin" onclick="openModal('addProfModal')">
+                <i class="fas fa-plus"></i> Ajouter
+            </button>
+        </div>
+    </div>
+    <div class="admin-card-body" style="padding:0;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom complet</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Spécialité</th>
+                    <th>Filière</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in professors %}
+                <tr>
+                    <td>{{ p.id_professor }}</td>
+                    <td><strong>{{ p.first_name }} {{ p.last_name }}</strong></td>
+                    <td>{{ p.email }}</td>
+                    <td>{{ p.phone|default:"-" }}</td>
+                    <td>{{ p.specialite|default:"-" }}</td>
+                    <td>
+                        {% if p.filiere %}
+                        <span class="badge-admin badge-info">{{ p.filiere.branch_short_name }}</span>
+                        {% else %}-{% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group-actions">
+                            <button class="btn-admin btn-warning-admin btn-sm-admin"
+                                onclick="editProf('{{ p.id_professor }}', '{{ p.first_name }}', '{{ p.last_name }}', '{{ p.email }}', '{{ p.phone|default:"" }}', '{{ p.specialite|default:"" }}', '{{ p.filiere_id|default:"" }}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <form method="post" style="margin:0;"
+                                onsubmit="return confirm('Supprimer ce professeur ?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="professor_id" value="{{ p.id_professor }}">
+                                <button type="submit" class="btn-admin btn-danger-admin btn-sm-admin"><i
+                                        class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state"><i class="fas fa-chalkboard-teacher"></i>
+                            <p>Aucun professeur</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="admin-modal-overlay" id="addProfModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3 id="profModalTitle"><i class="fas fa-user-plus"></i> Ajouter un professeur</h3>
+            <button class="admin-modal-close" onclick="closeModal('addProfModal')">&times;</button>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" id="profAction" value="add">
+            <input type="hidden" name="professor_id" id="profId">
+            <div class="admin-modal-body">
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Prénom</label>
+                        <input type="text" name="first_name" id="profFirstName" class="admin-form-control" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Nom</label>
+                        <input type="text" name="last_name" id="profLastName" class="admin-form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" id="profEmail" class="admin-form-control" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Téléphone</label>
+                        <input type="text" name="phone" id="profPhone" class="admin-form-control">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Spécialité</label>
+                        <input type="text" name="specialite" id="profSpec" class="admin-form-control">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Filière</label>
+                        <select name="filiere" id="profFiliere" class="admin-form-control">
+                            <option value="">-- Aucune --</option>
+                            {% for f in filieres %}
+                            <option value="{{ f.id_filiere }}">{{ f.filiere_name }} ({{ f.branch_short_name }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn-admin btn-danger-admin"
+                    onclick="closeModal('addProfModal')">Annuler</button>
+                <button type="submit" class="btn-admin btn-success-admin"><i class="fas fa-save"></i>
+                    Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openModal(id) { document.getElementById(id).classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    function editProf(id, fn, ln, email, phone, spec, filId) {
+        document.getElementById('profAction').value = 'edit';
+        document.getElementById('profId').value = id;
+        document.getElementById('profFirstName').value = fn;
+        document.getElementById('profLastName').value = ln;
+        document.getElementById('profEmail').value = email;
+        document.getElementById('profPhone').value = phone;
+        document.getElementById('profSpec').value = spec;
+        document.getElementById('profFiliere').value = filId;
+        document.getElementById('profModalTitle').innerHTML = '<i class="fas fa-edit"></i> Modifier le professeur';
+        openModal('addProfModal');
+    }
+
+    document.querySelectorAll('.admin-modal-overlay').forEach(o => {
+        o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); });
+    });
+</script>
+{% endblock %}

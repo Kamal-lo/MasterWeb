@@ -1,0 +1,151 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Gestion des Notes{% endblock %}
+{% block page_title %}📚 Gestion des Notes{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3><i class="fas fa-filter" style="color:var(--admin-accent)"></i> Filtrer les notes</h3>
+    </div>
+    <div class="admin-card-body">
+        <form method="get" action="{% url 'admin_grades' %}">
+            <div class="form-row">
+                <div class="admin-form-group">
+                    <label>Filière</label>
+                    <select name="filiere" class="admin-form-control" onchange="this.form.submit()">
+                        <option value="">-- Toutes les filières --</option>
+                        {% for f in filieres %}
+                        <option value="{{ f.id_filiere }}" {% if selected_filiere == f.id_filiere|stringformat:"s" %}selected{% endif %}>{{ f.filiere_name }} ({{ f.branch_short_name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="admin-form-group">
+                    <label>Module</label>
+                    <select name="module" class="admin-form-control" onchange="this.form.submit()">
+                        <option value="">-- Tous les modules --</option>
+                        {% for m in modules %}
+                        <option value="{{ m.module_code }}" {% if selected_module == m.module_code %}selected{% endif %}>
+                            {{ m.module_code }} - {{ m.module_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="admin-form-group">
+                    <label>Recherche étudiant</label>
+                    <input type="text" name="q" class="admin-form-control" placeholder="Nom ou CIN..."
+                        value="{{ query }}">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3><i class="fas fa-clipboard-list" style="color:var(--admin-success)"></i> Notes des étudiants</h3>
+    </div>
+    <div class="admin-card-body" style="padding:0;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Étudiant</th>
+                    <th>Module</th>
+                    <th>Note SN</th>
+                    <th>Note SR</th>
+                    <th>Résultat</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in grades_data %}
+                <tr>
+                    <td><strong>{{ g.student_name }}</strong></td>
+                    <td>{{ g.module_code }} - {{ g.module_name }}</td>
+                    <td>{{ g.note_sn|default:"-" }}</td>
+                    <td>{{ g.note_sr|default:"-" }}</td>
+                    <td>
+                        {% if g.note_sn != None %}
+                        {% if g.note_sn >= 10 %}
+                        <span class="badge-admin badge-success">Validé</span>
+                        {% else %}
+                        <span class="badge-admin badge-danger">Rattrap.</span>
+                        {% endif %}
+                        {% else %}
+                        <span class="badge-admin badge-warning">Non noté</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn-admin btn-warning-admin btn-sm-admin"
+                            onclick="editGrade('{{ g.grade_id }}', '{{ g.note_sn|default_if_none:"" }}', '{{ g.note_sr|default_if_none:"" }}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i class="fas fa-clipboard-list"></i>
+                            <p>Sélectionnez un filtre pour afficher les notes</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="admin-modal-overlay" id="editGradeModal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h3><i class="fas fa-edit"></i> Modifier la note</h3>
+            <button class="admin-modal-close" onclick="closeModal('editGradeModal')">&times;</button>
+        </div>
+        <form method="post" action="{% url 'admin_grades' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="edit_grade">
+            <input type="hidden" name="grade_id" id="editGradeId">
+            <div class="admin-modal-body">
+                <div class="form-row">
+                    <div class="admin-form-group">
+                        <label>Note Session Normale (SN)</label>
+                        <input type="number" step="0.01" min="0" max="20" name="note_sn" id="editNoteSn"
+                            class="admin-form-control">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Note Session Rattrapage (SR)</label>
+                        <input type="number" step="0.01" min="0" max="20" name="note_sr" id="editNoteSr"
+                            class="admin-form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn-admin btn-danger-admin"
+                    onclick="closeModal('editGradeModal')">Annuler</button>
+                <button type="submit" class="btn-admin btn-success-admin"><i class="fas fa-save"></i>
+                    Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openModal(id) { document.getElementById(id).classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    function editGrade(gradeId, noteSn, noteSr) {
+        document.getElementById('editGradeId').value = gradeId;
+        document.getElementById('editNoteSn').value = noteSn;
+        document.getElementById('editNoteSr').value = noteSr;
+        openModal('editGradeModal');
+    }
+
+    document.querySelectorAll('.admin-modal-overlay').forEach(o => {
+        o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); });
+    });
+</script>
+{% endblock %}

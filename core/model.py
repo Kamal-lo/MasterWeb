@@ -180,3 +180,41 @@ class DemandeRecorrection(models.Model):
 
     def __str__(self):
         return f"Recorrection {self.module.module_code} - {self.student.last_name_fr}"
+
+
+class Professor(models.Model):
+    id_professor = models.BigAutoField(primary_key=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    email = models.EmailField(max_length=100, unique=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    specialite = models.CharField(max_length=100, blank=True, null=True)
+    filiere = models.ForeignKey(Filiere, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        managed = True
+        db_table = 'professors'
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+
+class AdminAccount(models.Model):
+    ROLE_CHOICES = [
+        ('admin', 'Administrateur'),
+        ('professor', 'Professeur'),
+        ('scolarite', 'Scolarité'),
+    ]
+    id_account = models.BigAutoField(primary_key=True)
+    username = models.CharField(max_length=50, unique=True)
+    password_hash = models.CharField(max_length=255)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='admin')
+    is_active = models.BooleanField(default=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = True
+        db_table = 'admin_accounts'
+
+    def __str__(self):
+        return f"{self.username} ({self.role})"
