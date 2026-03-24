@@ -46,7 +46,7 @@
                     <td>
                         <div class="btn-group-actions">
                             <button class="btn-admin btn-warning-admin btn-sm-admin"
-                                onclick="editProf('{{ p.id_professor }}', '{{ p.first_name }}', '{{ p.last_name }}', '{{ p.email }}', '{{ p.phone|default:"" }}', '{{ p.specialite|default:"" }}', '{{ p.filiere_id|default:"" }}')">
+                                onclick="editProf(`{{ p.id_professor|escapejs }}`, `{{ p.first_name|escapejs }}`, `{{ p.last_name|escapejs }}`, `{{ p.email|escapejs }}`, `{{ p.phone|default:''|escapejs }}`, `{{ p.specialite|default:''|escapejs }}`, `{{ p.filiere_id|default:''|escapejs }}`)">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <form method="post" style="margin:0;"

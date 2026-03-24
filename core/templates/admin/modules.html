@@ -98,7 +98,7 @@
                     <td>
                         <div class="btn-group-actions">
                             <button class="btn-admin btn-warning-admin btn-sm-admin"
-                                onclick="editModule('{{ m.module_code }}', '{{ m.module_name }}', '{{ m.semester|default:"" }}', '{{ m.coefficient|default:"" }}', '{{ m.id_filiere_id|default:"" }}')">
+                                onclick="editModule('{{ m.module_code|escapejs }}', '{{ m.module_name|escapejs }}', '{{ m.semester|escapejs }}', '{{ m.coefficient|escapejs }}', '{{ m.id_filiere_id|escapejs }}')">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <form method="post" style="margin:0;" onsubmit="return confirm('Supprimer ce module ?');">

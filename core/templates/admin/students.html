@@ -12,7 +12,7 @@
                 <i class="fas fa-search"></i>
                 <input type="text" name="q" placeholder="Rechercher par nom, CIN, CNE..." value="{{ query }}">
             </form>
-            <button class="btn-admin btn-primary-admin" onclick="openModal('addStudentModal')">
+            <button class="btn-admin btn-primary-admin" onclick="openAddStudentModal()">
                 <i class="fas fa-plus"></i> Ajouter
             </button>
         </div>
@@ -41,10 +41,10 @@
                     <td>{{ s.phone|default:"-" }}</td>
                     <td>
                         <div class="btn-group-actions">
-                            <a href="?edit={{ s.id_student }}" class="btn-admin btn-warning-admin btn-sm-admin"
-                                title="Modifier">
+                            <button type="button" class="btn-admin btn-warning-admin btn-sm-admin" title="Modifier"
+                                onclick="editStudent(`{{ s.id_student|escapejs }}`, `{{ s.first_name_fr|escapejs }}`, `{{ s.last_name_fr|escapejs }}`, `{{ s.first_name_ar|escapejs }}`, `{{ s.last_name_ar|escapejs }}`, `{{ s.cin|escapejs }}`, `{{ s.massar_code|escapejs }}`, `{{ s.email|default:''|escapejs }}`, `{{ s.phone|default:''|escapejs }}`, `{% if s.birth_date %}{{ s.birth_date|date:'Y-m-d' }}{% endif %}`, `{{ s.lieu_naissance|default:''|escapejs }}`)">
                                 <i class="fas fa-edit"></i>
-                            </a>
+                            </button>
                             <form method="post" action="{% url 'admin_students' %}" style="margin:0;"
                                 onsubmit="return confirm('Supprimer cet étudiant ?');">
                                 {% csrf_token %}
@@ -76,61 +76,62 @@
 <div class="admin-modal-overlay" id="addStudentModal">
     <div class="admin-modal">
         <div class="admin-modal-header">
-            <h3><i class="fas fa-user-plus"></i> Ajouter un étudiant</h3>
+            <h3 id="studentModalTitle"><i class="fas fa-user-plus"></i> Ajouter un étudiant</h3>
             <button class="admin-modal-close" onclick="closeModal('addStudentModal')">&times;</button>
         </div>
         <form method="post" action="{% url 'admin_students' %}">
             {% csrf_token %}
-            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="action" id="studentAction" value="add">
+            <input type="hidden" name="student_id" id="studentId" value="">
             <div class="admin-modal-body">
                 <div class="form-row">
                     <div class="admin-form-group">
                         <label>Prénom (FR)</label>
-                        <input type="text" name="first_name_fr" class="admin-form-control" required>
+                        <input type="text" name="first_name_fr" id="studFnFr" class="admin-form-control" required>
                     </div>
                     <div class="admin-form-group">
                         <label>Nom (FR)</label>
-                        <input type="text" name="last_name_fr" class="admin-form-control" required>
+                        <input type="text" name="last_name_fr" id="studLnFr" class="admin-form-control" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="admin-form-group">
                         <label>Prénom (AR)</label>
-                        <input type="text" name="first_name_ar" class="admin-form-control" dir="rtl">
+                        <input type="text" name="first_name_ar" id="studFnAr" class="admin-form-control" dir="rtl">
                     </div>
                     <div class="admin-form-group">
                         <label>Nom (AR)</label>
-                        <input type="text" name="last_name_ar" class="admin-form-control" dir="rtl">
+                        <input type="text" name="last_name_ar" id="studLnAr" class="admin-form-control" dir="rtl">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="admin-form-group">
                         <label>CIN</label>
-                        <input type="text" name="cin" class="admin-form-control" required>
+                        <input type="text" name="cin" id="studCin" class="admin-form-control" required>
                     </div>
                     <div class="admin-form-group">
                         <label>Code Massar (CNE)</label>
-                        <input type="text" name="massar_code" class="admin-form-control" required>
+                        <input type="text" name="massar_code" id="studMassar" class="admin-form-control" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="admin-form-group">
                         <label>Email</label>
-                        <input type="email" name="email" class="admin-form-control">
+                        <input type="email" name="email" id="studEmail" class="admin-form-control">
                     </div>
                     <div class="admin-form-group">
                         <label>Téléphone</label>
-                        <input type="text" name="phone" class="admin-form-control">
+                        <input type="text" name="phone" id="studPhone" class="admin-form-control">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="admin-form-group">
                         <label>Date de naissance</label>
-                        <input type="date" name="birth_date" class="admin-form-control">
+                        <input type="date" name="birth_date" id="studBirth" class="admin-form-control">
                     </div>
                     <div class="admin-form-group">
                         <label>Lieu de naissance</label>
-                        <input type="text" name="lieu_naissance" class="admin-form-control">
+                        <input type="text" name="lieu_naissance" id="studLieu" class="admin-form-control">
                     </div>
                 </div>
             </div>
@@ -150,6 +151,40 @@
 <script>
     function openModal(id) { document.getElementById(id).classList.add('show'); }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    function openAddStudentModal() {
+        document.getElementById('studentAction').value = 'add';
+        document.getElementById('studentId').value = '';
+        document.getElementById('studFnFr').value = '';
+        document.getElementById('studLnFr').value = '';
+        document.getElementById('studFnAr').value = '';
+        document.getElementById('studLnAr').value = '';
+        document.getElementById('studCin').value = '';
+        document.getElementById('studMassar').value = '';
+        document.getElementById('studEmail').value = '';
+        document.getElementById('studPhone').value = '';
+        document.getElementById('studBirth').value = '';
+        document.getElementById('studLieu').value = '';
+        document.getElementById('studentModalTitle').innerHTML = '<i class="fas fa-user-plus"></i> Ajouter un étudiant';
+        openModal('addStudentModal');
+    }
+
+    function editStudent(id, fnFr, lnFr, fnAr, lnAr, cin, massar, email, phone, birth, lieu) {
+        document.getElementById('studentAction').value = 'edit';
+        document.getElementById('studentId').value = id;
+        document.getElementById('studFnFr').value = fnFr;
+        document.getElementById('studLnFr').value = lnFr;
+        document.getElementById('studFnAr').value = fnAr;
+        document.getElementById('studLnAr').value = lnAr;
+        document.getElementById('studCin').value = cin;
+        document.getElementById('studMassar').value = massar;
+        document.getElementById('studEmail').value = email;
+        document.getElementById('studPhone').value = phone;
+        document.getElementById('studBirth').value = birth;
+        document.getElementById('studLieu').value = lieu;
+        document.getElementById('studentModalTitle').innerHTML = '<i class="fas fa-edit"></i> Modifier l\'étudiant';
+        openModal('addStudentModal');
+    }
 
     // Fermer modal en cliquant à l'extérieur
     document.querySelectorAll('.admin-modal-overlay').forEach(overlay => {

@@ -104,6 +104,22 @@ def admin_students(request):
             Students.objects.filter(id_student=student_id).delete()
             messages.success(request, "Étudiant supprimé.")
 
+        elif action == 'edit':
+            student_id = request.POST.get('student_id')
+            s = get_object_or_404(Students, id_student=student_id)
+            s.first_name_fr = request.POST.get('first_name_fr', '')
+            s.last_name_fr = request.POST.get('last_name_fr', '')
+            s.first_name_ar = request.POST.get('first_name_ar', '')
+            s.last_name_ar = request.POST.get('last_name_ar', '')
+            s.cin = request.POST.get('cin', '')
+            s.massar_code = request.POST.get('massar_code', '')
+            s.email = request.POST.get('email', '')
+            s.phone = request.POST.get('phone', '')
+            s.birth_date = request.POST.get('birth_date') or None
+            s.lieu_naissance = request.POST.get('lieu_naissance', '')
+            s.save()
+            messages.success(request, "Étudiant modifié avec succès.")
+
         return redirect('admin_students')
 
     students = Students.objects.all()
@@ -137,13 +153,23 @@ def admin_grades(request):
         action = request.POST.get('action')
         if action == 'edit_grade':
             grade_id = request.POST.get('grade_id')
-            grade = get_object_or_404(Grades, id_grade=grade_id)
+            enrollment_id = request.POST.get('enrollment_id')
+            
+            if grade_id:
+                grade = get_object_or_404(Grades, id_grade=grade_id)
+            elif enrollment_id:
+                grade, _ = Grades.objects.get_or_create(id_enrollment_id=enrollment_id)
+            else:
+                messages.error(request, "Inscription introuvable.")
+                return redirect('admin_grades')
+
             note_sn = request.POST.get('note_sn')
             note_sr = request.POST.get('note_sr')
+            
             grade.note_sn = float(note_sn) if note_sn else None
             grade.note_sr = float(note_sr) if note_sr else None
             grade.save()
-            messages.success(request, "Note modifiée avec succès.")
+            messages.success(request, "Notes enregistrées avec succès.")
         return redirect('admin_grades')
 
     # Filtrer les modules par filière si sélectionnée
@@ -168,15 +194,15 @@ def admin_grades(request):
 
     for e in enrollments[:100]:  # Limiter à 100 résultats
         grade = Grades.objects.filter(id_enrollment=e).first()
-        if grade:
-            grades_data.append({
-                'grade_id': grade.id_grade,
-                'student_name': f"{e.id_student.first_name_fr} {e.id_student.last_name_fr}" if e.id_student else "—",
-                'module_code': e.module_code.module_code if e.module_code else "—",
-                'module_name': e.module_code.module_name if e.module_code else "",
-                'note_sn': grade.note_sn,
-                'note_sr': grade.note_sr,
-            })
+        grades_data.append({
+            'enrollment_id': e.id_enrollment,
+            'grade_id': grade.id_grade if grade else '',
+            'student_name': f"{e.id_student.first_name_fr} {e.id_student.last_name_fr}" if e.id_student else "—",
+            'module_code': e.module_code.module_code if e.module_code else "—",
+            'module_name': e.module_code.module_name if e.module_code else "",
+            'note_sn': grade.note_sn if grade else None,
+            'note_sr': grade.note_sr if grade else None,
+        })
 
     return render(request, 'admin/grades.html', {
         'active_page': 'grades',
